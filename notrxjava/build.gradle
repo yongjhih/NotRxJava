@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:2.5.0'
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
+
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'java'
+
+retrolambda {
+    // ```bash
+    // export JAVA8_HOME="/usr/lib/jvm/java-8-oracle"
+    // export JAVA7_HOME="/usr/lib/jvm/java-7-oracle"
+    // export JAVA_HOME="$JAVA8_HOME"
+    // ```
+    //jvmArgs '-noverify'
+    jdk System.getenv("JAVA8_HOME")
+    //oldJdk System.getenv("JAVA_HOME")
+    oldJdk System.getenv("JAVA7_HOME")
+    javaVersion JavaVersion.VERSION_1_7
+}
+
+repositories {
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    //testCompile "org.mockito:mockito-core:1.+"
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+def getRepositoryUsername() {
+    return hasProperty('BINTRAY_USER') ? BINTRAY_USER : ""
+}
+
+def getRepositoryPassword() {
+    return hasProperty('BINTRAY_KEY') ? BINTRAY_KEY : ""
+}
+
+publish {
+    userOrg = 'yongjhih'
+    groupId = 'com.github.yongjhih'
+    artifactId = 'notrxjava'
+    uploadName = 'NotRxJava'
+    publishVersion = '1.0.0'
+    desc = 'NotRxJava'
+    website = 'https://github.com/yongjhih/NotRxJava'
+    bintrayUser = getRepositoryUsername()
+    bintrayKey = getRepositoryPassword()
+    //dryRun = false
+}
+
+apply plugin: 'maven'
+
+group = 'com.github.yongjhih'
